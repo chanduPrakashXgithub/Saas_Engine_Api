@@ -13,6 +13,7 @@ model Tenant {
   createdAt DateTime      @default(now())
 
   users     User[]
+  apiKeys   ApiKey[]
 }
 
 model User {
@@ -36,3 +37,21 @@ enum UserRole {
   TENANT_ADMIN
   TENANT_USER
 }
+model ApiKey {
+  id         String   @id @default(uuid())
+  tenantId   String
+  name       String
+  keyHash    String
+  keyPrefix  String
+  status     ApiKeyStatus @default(ACTIVE)
+  createdAt  DateTime @default(now())
+  lastUsedAt DateTime?
+
+  tenant     Tenant @relation(fields: [tenantId], references: [id])
+}
+
+enum ApiKeyStatus {
+  ACTIVE
+  REVOKED
+}
+
