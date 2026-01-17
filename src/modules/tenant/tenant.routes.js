@@ -1,6 +1,8 @@
 import { Router } from "express";
 import * as tenantController from "./tenant.controller.js";
 import { tenantResolverMiddleware } from "../../middleware/tenantResolver.middleware.js";
+import { auditMiddleware } from "../../middleware/audit.middleware.js";
+
 
 const router = Router();
 router.post("/", tenantController.createTenant);
@@ -11,6 +13,11 @@ router.get(
     (req, res) => {
         res.json(req.tenant);
     }
+);
+router.post(
+    "/",
+    auditMiddleware("CREATE", "TENANT"),
+    tenantController.createTenant
 );
 
 export default router;

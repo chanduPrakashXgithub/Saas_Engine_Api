@@ -1,4 +1,4 @@
-import { verfy_token } from "../utils/jwt";
+import { verfy_token } from "../utils/jwt.js";
 export const auth_middlewaare=(roles=[])=>{
     return (req,res,next)=>{
         const authHeader = req.headers.authorization;

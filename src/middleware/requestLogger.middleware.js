@@ -1,8 +1,23 @@
-export  const requestLogger = (req, res, next) => {
+import crypto from "crypto";
+
+export const requestLogger = (req, res, next) => {
+    req.requestId = crypto.randomUUID();
     const start = Date.now();
-    res.on("fisnish",()=>{
-        const duration = date.now() - start;
-        console.log(`${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`);
-    })
+
+    res.on("finish", () => {
+        const duration = Date.now() - start;
+
+        console.log(
+            JSON.stringify({
+                requestId: req.requestId,
+                method: req.method,
+                path: req.originalUrl,
+                status: res.statusCode,
+                durationMs: duration,
+                tenantId: req.tenantId,
+            })
+        );
+    });
+
     next();
 };
