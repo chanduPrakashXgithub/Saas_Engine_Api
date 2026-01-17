@@ -1,26 +1,27 @@
 import { createAuditLog } from "../services/audit.service.js";
-export const auditMiddleware = ( action,resource)=>{
-    return async(req,resource,next)=>{
-        resource.on("finish",async()=>{
-            try{
-                await createAuduitLog({
-                    tenantId:req.tenantId || req.user?.tenantId,
-                    userId : req.user?.id,
+
+export const auditMiddleware = (action, resourceType) => {
+    return async (req, res, next) => {
+        res.on("finish", async () => {
+            try {
+                await createAuditLog({
+                    tenantId: req.tenantId || req.user?.tenantId,
+                    userId: req.user?.id,
                     action,
-                    resource,
-                    resourceId:req.params.id || null,
-                    method:req.method,
-                    path : req.originalUrl,
-                    ipAddress:req.ip,
-                    userAgent:req.headers["User-Agent"],
-                    metadata:{
-                        statusCode:resource.statusCode
+                    resource: resourceType,
+                    resourceId: req.params.id || null,
+                    method: req.method,
+                    path: req.originalUrl,
+                    ipAddress: req.ip,
+                    userAgent: req.headers["user-agent"],
+                    metadata: {
+                        statusCode: res.statusCode,
                     },
                 });
-            }catch(err){
-                console.error("Failed to create audit log:",err);
+            } catch (err) {
+                console.error("Failed to create audit log:", err);
             }
-        });        next();
-         
-    }
-}
+        });
+        next();
+    };
+};
